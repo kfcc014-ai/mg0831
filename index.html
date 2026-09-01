@@ -11,7 +11,7 @@
             align-items: center;
             background-color: #1a1a2e;
             color: #fff;
-            font-family: 'Pretendard', sans-serif;
+            font-family: 'Pretendard', -apple-system, sans-serif;
             margin: 0;
             padding: 20px;
         }
@@ -74,7 +74,7 @@
         const timeElement = document.getElementById('timeVal');
 
         let score = 0;
-        let gameTime = 0; // 0에서 90까지 증가
+        let gameTime = 0;
         let frameCount = 0;
         let ball = { x: 400, y: 250, targetX: 400, targetY: 250, speed: 8, owner: null, isShooting: false };
         let players = [];
@@ -92,22 +92,22 @@
                 number: 7, name: '한성준', speed: 4.5
             });
 
-            // 한국 팀 동료 (AI)
+            // 한국 팀 동료 (AI) - 유저를 도와 전방으로 침투
             const korNumbers = [9, 10, 11, 4];
             for (let i = 0; i < 4; i++) {
                 players.push({
                     x: 150 + Math.random() * 100, y: 80 + i * 100,
                     team: 'KOR', isPlayer: false,
-                    number: korNumbers[i], speed: 3.5
+                    number: korNumbers[i], speed: 3.5, startY: 80 + i * 100
                 });
             }
 
-            // 상대 팀 수비수 (AI)
+            // 상대 팀 수비수 (AI) - 유저를 끈질기게 추격
             for (let i = 0; i < 4; i++) {
                 players.push({
-                    x: 550 - Math.random() * 50, y: 80 + i * 100,
+                    x: 600 - Math.random() * 50, y: 80 + i * 100,
                     team: 'OPP', isPlayer: false,
-                    number: i + 2, speed: 2.8, role: 'DF'
+                    number: i + 2, speed: 2.5, role: 'DF'
                 });
             }
             
@@ -137,9 +137,9 @@
             ctx.lineWidth = 3;
 
             // 라인 그리기
-            ctx.strokeRect(10, 10, 780, 480); // 외곽선
-            ctx.beginPath(); ctx.moveTo(400, 10); ctx.lineTo(400, 490); ctx.stroke(); // 하프라인
-            ctx.beginPath(); ctx.arc(400, 250, 70, 0, Math.PI * 2); ctx.stroke(); // 센터 서클
+            ctx.strokeRect(10, 10, 780, 480);
+            ctx.beginPath(); ctx.moveTo(400, 10); ctx.lineTo(400, 490); ctx.stroke();
+            ctx.beginPath(); ctx.arc(400, 250, 70, 0, Math.PI * 2); ctx.stroke();
 
             // 페널티 박스
             ctx.strokeRect(10, 100, 130, 300);
@@ -155,9 +155,8 @@
             ctx.save();
             ctx.translate(p.x, p.y);
 
-            // 유니폼 색상
             let fillColor = p.team === 'KOR' ? '#ef3340' : '#003478';
-            if (p.role === 'GK') fillColor = '#f39c12'; // 골키퍼는 노란색
+            if (p.role === 'GK') fillColor = '#f39c12';
 
             // 몸통
             ctx.beginPath();
@@ -168,7 +167,7 @@
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // 주장 완장 (노란 테두리 강조)
+            // 주장 완장 및 이름표
             if (p.isPlayer) {
                 ctx.beginPath();
                 ctx.arc(0, 0, 17, -Math.PI/4, Math.PI/4);
@@ -176,7 +175,6 @@
                 ctx.lineWidth = 4;
                 ctx.stroke();
                 
-                // 이름표
                 ctx.fillStyle = '#fff';
                 ctx.font = 'bold 12px Pretendard';
                 ctx.textAlign = 'center';
@@ -215,7 +213,7 @@
                 if (keys['Space']) {
                     ball.owner = null; ball.isShooting = true;
                     ball.targetX = 800; ball.targetY = 250; 
-                    ball.speed = 15; // 강력한 슈팅
+                    ball.speed = 18; 
                 }
             } else {
                 let dx = ball.targetX - ball.x;
@@ -230,7 +228,7 @@
                 }
             }
 
-            // 4. 골인 판정 (우측 골대)
+            // 4. 골인 판정
             if (ball.x > 780 && ball.y > 195 && ball.y < 305) {
                 score++;
                 scoreElement.innerText = score;
@@ -238,7 +236,7 @@
                 return;
             }
 
-            // 5. AI 움직임
+            // 5. 활발한 AI 움직임 로직 적용
             players.forEach(p => {
                 if (p.isPlayer) return;
 
@@ -246,19 +244,27 @@
                 let targetY = ball.y;
 
                 if (p.role === 'GK') {
-                    // 골키퍼는 골대 앞을 지키며 공의 Y축을 따라감
+                    // 골키퍼: 공의 Y축을 따라가며 골대 방어
                     targetX = 760;
                     targetY = Math.max(200, Math.min(300, ball.y));
-                } else if (p.team === 'KOR' && ball.owner === user) {
-                    // 동료는 공격 가담
-                    targetX = p.x + 2; 
+                } else if (p.team === 'KOR') {
+                    // 빨간색 팀(한국 AI): 유저가 공을 잡으면 상대 진영으로 적극 쇄도
+                    if (ball.owner === user) {
+                        targetX = 700; 
+                        targetY = p.startY; // 자신의 초기 라인을 유지하며 전진
+                    }
+                } else if (p.team === 'OPP') {
+                    // 파란색 팀(상대 AI): 항상 공이나 공을 가진 선수를 향해 집요하게 압박
+                    targetX = ball.x;
+                    targetY = ball.y;
                 }
 
                 let pdx = targetX - p.x;
                 let pdy = targetY - p.y;
                 let pDist = Math.hypot(pdx, pdy);
                 
-                if (pDist > 15) {
+                // 목표물과 일정 거리(5px) 이상 차이날 때만 이동하여 끊김 방지
+                if (pDist > 5) {
                     p.x += (pdx / pDist) * p.speed;
                     p.y += (pdy / pDist) * p.speed;
                 }
@@ -266,7 +272,7 @@
 
             // 6. 타이머 업데이트
             frameCount++;
-            if (frameCount % 30 === 0) { // 약 0.5초마다 1분씩 증가
+            if (frameCount % 30 === 0) {
                 gameTime++;
                 let displayTime = gameTime < 10 ? '0' + gameTime : gameTime;
                 timeElement.innerText = displayTime + ':00';
@@ -290,7 +296,7 @@
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // 선수들 그리기 (Y축 기준으로 정렬하여 입체감 부여)
+            // Y축 정렬 (아래에 있는 선수가 위에 그려지도록 입체감 부여)
             players.sort((a, b) => a.y - b.y).forEach(drawPlayer);
         }
 
