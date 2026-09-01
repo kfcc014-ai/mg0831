@@ -89,25 +89,25 @@
             players.push({
                 x: 350, y: 250,
                 team: 'KOR', isPlayer: true,
-                number: 7, name: '한성준', speed: 4.5
+                number: 7, name: '한성준', speed: 4.5, isMoving: false
             });
 
-            // 한국 팀 동료 (AI) - 유저를 도와 전방으로 침투
+            // 한국 팀 동료 (AI)
             const korNumbers = [9, 10, 11, 4];
             for (let i = 0; i < 4; i++) {
                 players.push({
                     x: 150 + Math.random() * 100, y: 80 + i * 100,
                     team: 'KOR', isPlayer: false,
-                    number: korNumbers[i], speed: 3.5, startY: 80 + i * 100
+                    number: korNumbers[i], speed: 3.5, startY: 80 + i * 100, isMoving: false
                 });
             }
 
-            // 상대 팀 수비수 (AI) - 유저를 끈질기게 추격
+            // 상대 팀 수비수 (AI)
             for (let i = 0; i < 4; i++) {
                 players.push({
                     x: 600 - Math.random() * 50, y: 80 + i * 100,
                     team: 'OPP', isPlayer: false,
-                    number: i + 2, speed: 2.5, role: 'DF'
+                    number: i + 2, speed: 2.5, role: 'DF', isMoving: false
                 });
             }
             
@@ -115,7 +115,7 @@
             players.push({
                 x: 770, y: 250,
                 team: 'OPP', isPlayer: false,
-                number: 1, speed: 3.0, role: 'GK'
+                number: 1, speed: 3.0, role: 'GK', isMoving: false
             });
         }
 
@@ -127,7 +127,6 @@
         }
 
         function drawPitch() {
-            // 잔디 패턴
             for (let i = 0; i < canvas.width; i += 50) {
                 ctx.fillStyle = (i / 50) % 2 === 0 ? '#27ae60' : '#2ecc71';
                 ctx.fillRect(i, 0, 50, canvas.height);
@@ -136,63 +135,102 @@
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
             ctx.lineWidth = 3;
 
-            // 라인 그리기
             ctx.strokeRect(10, 10, 780, 480);
             ctx.beginPath(); ctx.moveTo(400, 10); ctx.lineTo(400, 490); ctx.stroke();
             ctx.beginPath(); ctx.arc(400, 250, 70, 0, Math.PI * 2); ctx.stroke();
 
-            // 페널티 박스
             ctx.strokeRect(10, 100, 130, 300);
             ctx.strokeRect(660, 100, 130, 300);
             
-            // 골대
             ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
             ctx.fillRect(0, 200, 15, 100);
             ctx.fillRect(785, 200, 15, 100);
         }
 
+        // 캐릭터 그리기 함수 (원 대신 사람 형태)
         function drawPlayer(p) {
             ctx.save();
             ctx.translate(p.x, p.y);
 
-            let fillColor = p.team === 'KOR' ? '#ef3340' : '#003478';
-            if (p.role === 'GK') fillColor = '#f39c12';
+            // 달릴 때 팔다리를 앞뒤로 흔드는 애니메이션 계산
+            let swing = p.isMoving ? Math.sin(frameCount * 0.4) * 6 : 0;
 
-            // 몸통
-            ctx.beginPath();
-            ctx.arc(0, 0, 15, 0, Math.PI * 2);
-            ctx.fillStyle = fillColor;
-            ctx.fill();
-            ctx.strokeStyle = '#111';
-            ctx.lineWidth = 2;
-            ctx.stroke();
+            // 팀별 색상 설정
+            let shirtColor = p.team === 'KOR' ? '#ef3340' : '#003478';
+            if (p.role === 'GK') shirtColor = '#f39c12';
+            let skinColor = '#f1c27d';
+            let shortsColor = p.team === 'KOR' ? '#222' : '#fff';
+            let shoesColor = '#333';
 
-            // 주장 완장 및 이름표
+            // 1. 그림자
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.beginPath(); ctx.ellipse(0, 14, 12, 5, 0, 0, Math.PI*2); ctx.fill();
+
+            // 2. 다리 (이동 시 흔들림)
+            // 왼쪽 다리
+            ctx.fillStyle = shortsColor; ctx.fillRect(-7, 2 + swing, 6, 7); // 바지
+            ctx.fillStyle = skinColor;   ctx.fillRect(-6, 9 + swing, 4, 4); // 맨살
+            ctx.fillStyle = shoesColor;  ctx.fillRect(-7, 13 + swing, 6, 4); // 신발
+            // 오른쪽 다리
+            ctx.fillStyle = shortsColor; ctx.fillRect(1, 2 - swing, 6, 7);
+            ctx.fillStyle = skinColor;   ctx.fillRect(2, 9 - swing, 4, 4);
+            ctx.fillStyle = shoesColor;  ctx.fillRect(1, 13 - swing, 6, 4);
+
+            // 3. 팔 (다리와 반대로 흔들림)
+            // 왼쪽 팔
+            ctx.fillStyle = shirtColor; ctx.fillRect(-12, -6 - swing, 5, 7); // 소매
+            ctx.fillStyle = skinColor;  ctx.fillRect(-11, 1 - swing, 3, 5); // 손
+            // 오른쪽 팔
+            ctx.fillStyle = shirtColor; ctx.fillRect(7, -6 + swing, 5, 7);
+            ctx.fillStyle = skinColor;  ctx.fillRect(8, 1 + swing, 3, 5);
+
+            // 주장 완장 (왼팔)
             if (p.isPlayer) {
-                ctx.beginPath();
-                ctx.arc(0, 0, 17, -Math.PI/4, Math.PI/4);
-                ctx.strokeStyle = '#f1c40f';
-                ctx.lineWidth = 4;
-                ctx.stroke();
-                
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 12px Pretendard';
-                ctx.textAlign = 'center';
-                ctx.fillText(p.name, 0, -22);
+                ctx.fillStyle = '#f1c40f'; // 노란색 완장
+                ctx.fillRect(-13, -4 - swing, 7, 3);
             }
 
-            // 등번호
-            ctx.fillStyle = '#fff';
-            ctx.font = 'bold 14px Arial';
+            // 4. 몸통 (티셔츠)
+            ctx.fillStyle = shirtColor;
+            // 둥근 사각형 효과를 위해 arc와 rect 조합
+            ctx.beginPath();
+            ctx.arc(-4, -6, 4, Math.PI, Math.PI*1.5);
+            ctx.arc(4, -6, 4, Math.PI*1.5, Math.PI*2);
+            ctx.lineTo(8, 4); ctx.lineTo(-8, 4);
+            ctx.fill();
+
+            // 5. 머리와 머리카락
+            ctx.fillStyle = skinColor;
+            ctx.beginPath(); ctx.arc(0, -12, 6, 0, Math.PI*2); ctx.fill(); // 얼굴
+            
+            ctx.fillStyle = '#222'; // 검은 머리카락
+            ctx.beginPath(); ctx.arc(0, -13, 6, Math.PI, 0); ctx.fill(); // 머리 위쪽
+
+            // 6. 등번호
+            ctx.fillStyle = p.team === 'KOR' ? '#fff' : '#fff';
+            ctx.font = 'bold 10px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(p.number, 0, 1);
+            ctx.fillText(p.number, 0, -1);
+
+            // 7. 이름표 (주장만)
+            if (p.isPlayer) {
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 12px Pretendard';
+                ctx.fillText(p.name, 0, -28);
+            }
 
             ctx.restore();
         }
 
         function update() {
             let user = players[0];
+
+            // 모든 선수의 이동 상태 초기화 (애니메이션 용도)
+            players.forEach(p => {
+                p.prevX = p.x;
+                p.prevY = p.y;
+            });
 
             // 1. 유저 조작
             if (keys['ArrowUp'] || keys['KeyW']) user.y -= user.speed;
@@ -205,11 +243,11 @@
 
             // 2. 공 소유 판정
             let distToBall = Math.hypot(ball.x - user.x, ball.y - user.y);
-            if (distToBall < 22 && !ball.isShooting) ball.owner = user;
+            if (distToBall < 25 && !ball.isShooting) ball.owner = user;
 
             // 3. 공 이동 및 슈팅
             if (ball.owner === user) {
-                ball.x = user.x + 15; ball.y = user.y;
+                ball.x = user.x + 12; ball.y = user.y + 8; // 발 위치로 공 이동
                 if (keys['Space']) {
                     ball.owner = null; ball.isShooting = true;
                     ball.targetX = 800; ball.targetY = 250; 
@@ -244,17 +282,14 @@
                 let targetY = ball.y;
 
                 if (p.role === 'GK') {
-                    // 골키퍼: 공의 Y축을 따라가며 골대 방어
                     targetX = 760;
                     targetY = Math.max(200, Math.min(300, ball.y));
                 } else if (p.team === 'KOR') {
-                    // 빨간색 팀(한국 AI): 유저가 공을 잡으면 상대 진영으로 적극 쇄도
                     if (ball.owner === user) {
                         targetX = 700; 
-                        targetY = p.startY; // 자신의 초기 라인을 유지하며 전진
+                        targetY = p.startY;
                     }
                 } else if (p.team === 'OPP') {
-                    // 파란색 팀(상대 AI): 항상 공이나 공을 가진 선수를 향해 집요하게 압박
                     targetX = ball.x;
                     targetY = ball.y;
                 }
@@ -263,11 +298,15 @@
                 let pdy = targetY - p.y;
                 let pDist = Math.hypot(pdx, pdy);
                 
-                // 목표물과 일정 거리(5px) 이상 차이날 때만 이동하여 끊김 방지
                 if (pDist > 5) {
                     p.x += (pdx / pDist) * p.speed;
                     p.y += (pdy / pDist) * p.speed;
                 }
+            });
+
+            // 이동 여부 체크 (팔다리 애니메이션 작동을 위해)
+            players.forEach(p => {
+                p.isMoving = Math.abs(p.x - p.prevX) > 0.5 || Math.abs(p.y - p.prevY) > 0.5;
             });
 
             // 6. 타이머 업데이트
@@ -289,7 +328,7 @@
 
             // 공 그리기
             ctx.beginPath();
-            ctx.arc(ball.x, ball.y, 8, 0, Math.PI * 2);
+            ctx.arc(ball.x, ball.y, 6, 0, Math.PI * 2);
             ctx.fillStyle = '#fff';
             ctx.fill();
             ctx.strokeStyle = '#000';
