@@ -3,180 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>대한민국 축구 국가대표팀 전술 및 전략 분석</title>
+    <title>대한민국 전술 시뮬레이터</title>
     <style>
-        :root {
-            --primary-red: #ef3340; /* 대한민국 축구 국가대표팀 레드 */
-            --primary-blue: #003478; /* 대한민국 축구 국가대표팀 블루 */
-            --bg-light: #f8f9fa;
-            --text-dark: #333333;
-        }
-
         body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-            line-height: 1.6;
-            color: var(--text-dark);
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-light);
-        }
-
-        header {
-            background: linear-gradient(135deg, var(--primary-red), var(--primary-blue));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #2c3e50;
             color: white;
-            text-align: center;
-            padding: 4rem 2rem;
-        }
-
-        header h1 {
+            font-family: sans-serif;
             margin: 0;
-            font-size: 2.5rem;
-            font-weight: 800;
+            padding: 20px;
         }
-
-        header p {
-            margin-top: 1rem;
-            font-size: 1.2rem;
-            opacity: 0.9;
+        h1 { margin-bottom: 5px; color: #e74c3c; }
+        p { margin-top: 0; margin-bottom: 20px; color: #bdc3c7; }
+        canvas {
+            background-color: #27ae60;
+            border: 4px solid #fff;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            cursor: crosshair;
         }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 2rem;
+        .controls { margin-top: 15px; }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
-
-        .section-card {
-            background: white;
-            border-radius: 12px;
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        h2 {
-            color: var(--primary-blue);
-            border-bottom: 2px solid var(--primary-red);
-            padding-bottom: 0.5rem;
-            margin-top: 0;
-        }
-
-        .tactics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .tactic-item {
-            background-color: var(--bg-light);
-            padding: 1.5rem;
-            border-left: 4px solid var(--primary-red);
-            border-radius: 0 8px 8px 0;
-        }
-
-        .tactic-item h3 {
-            margin-top: 0;
-            color: var(--primary-red);
-        }
-
-        ul {
-            padding-left: 1.5rem;
-        }
-
-        li {
-            margin-bottom: 0.5rem;
-        }
-
-        footer {
-            text-align: center;
-            padding: 2rem;
-            background-color: #222;
-            color: #888;
-            font-size: 0.9rem;
-        }
-
-        /* 반응형 디자인 */
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 2rem;
-            }
-            .container {
-                padding: 1rem;
-            }
-            .section-card {
-                padding: 1.5rem;
-            }
-        }
+        button:hover { background-color: #c0392b; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>대한민국 축구 국가대표팀 전술 분석</h1>
-        <p>투혼과 스피드, 그리고 현대 축구의 결합</p>
-    </header>
+    <h1>전술 시뮬레이션: 전방 압박</h1>
+    <p>경기장을 클릭하여 공을 움직여보세요. 붉은색(대한민국)이 공을 향해 압박합니다.</p>
 
-    <main class="container">
-        
-        <section class="section-card">
-            <h2>핵심 전술 철학 (Core Philosophy)</h2>
-            <p>한국 축구는 전통적으로 강인한 체력과 투혼을 바탕으로 한 압박 축구를 구사해왔으며, 최근에는 현대 축구의 트렌드인 주도적인 빌드업과 공간 창출을 결합하고 있습니다.</p>
-            
-            <div class="tactics-grid">
-                <div class="tactic-item">
-                    <h3>강력한 전방 압박 (High Pressing)</h3>
-                    <p>상대 진영에서부터 공을 탈취하기 위해 유기적이고 강도 높은 압박을 시도합니다. 이는 체력적 우위를 바탕으로 상대의 실수를 유발하는 데 목적이 있습니다.</p>
-                </div>
-                <div class="tactic-item">
-                    <h3>빠른 공수 전환 (Quick Transition)</h3>
-                    <p>공을 탈취한 직후 2~3번의 패스만으로 상대 페널티 박스까지 도달하는 수직적이고 빠른 역습 전개를 중요시합니다.</p>
-                </div>
-                <div class="tactic-item">
-                    <h3>측면 지향적 공격 (Wing Play)</h3>
-                    <p>세계적인 수준의 윙어들을 활용하여 측면 공간을 허물고, 컷백이나 크로스를 통해 중앙의 스트라이커에게 득점 기회를 제공합니다.</p>
-                </div>
-            </div>
-        </section>
+    <canvas id="pitch" width="800" height="500"></canvas>
+    
+    <div class="controls">
+        <button onclick="resetGame()">위치 초기화</button>
+    </div>
 
-        <section class="section-card">
-            <h2>현대적 진화 (Modern Evolution)</h2>
-            <ul>
-                <li><strong>후방 빌드업 (Build-up from the back):</strong> 골키퍼와 센터백을 거쳐 미드필더로 이어지는 체계적인 패스 워크를 통해 점유율을 확보하고 경기를 주도합니다.</li>
-                <li><strong>비대칭 포메이션 활용:</strong> 상황에 따라 좌우 풀백의 전진 위치를 다르게 가져가거나, 하프 스페이스를 적극적으로 공략하는 변형 전술을 사용합니다.</li>
-                <li><strong>멀티 포지션 소화 능력:</strong> 2선 공격수와 미드필더들이 경기 중 끊임없이 위치를 교환(스위칭 플레이)하며 상대 수비진의 혼란을 야기합니다.</li>
-            </ul>
-        </section>
+    <script>
+        const canvas = document.getElementById('pitch');
+        const ctx = canvas.getContext('2d');
 
-        <section class="section-card">
-            <h2>포지션별 주요 역할</h2>
-            <table>
-                <colgroup>
-                    <col style="width: 20%;">
-                    <col style="width: 80%;">
-                </colgroup>
-                <tbody>
-                    <tr>
-                        <td><strong>공격수 (FW)</strong></td>
-                        <td>단순한 포스트 플레이뿐만 아니라, 폭넓은 활동량으로 전방 압박의 제1선 역할을 수행하며 공간으로 침투합니다.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>미드필더 (MF)</strong></td>
-                        <td>중원의 지배력을 높이기 위해 높은 전술적 이해도가 요구되며, 공수 밸런스 유지와 볼 배급의 핵심 역할을 담당합니다.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>수비수 (DF)</strong></td>
-                        <td>대인 마크 능력은 물론, 현대 축구에 필수적인 정확한 롱패스와 전진 드리블을 통한 빌드업 기여가 필수적입니다.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+        let ball = { x: 400, y: 250, targetX: 400, targetY: 250, speed: 8 };
+        let players = [];
 
-    </main>
+        // 선수 초기 세팅
+        function initPlayers() {
+            players = [];
+            // 대한민국 (빨간색 - 스피드 빠름)
+            for (let i = 0; i < 5; i++) {
+                players.push({
+                    x: 200 + Math.random() * 100,
+                    y: 100 + i * 80,
+                    color: '#e74c3c',
+                    speed: 3 + Math.random() * 1.5,
+                    team: 'KOR'
+                });
+            }
+            // 상대팀 (파란색 - 스피드 보통)
+            for (let i = 0; i < 5; i++) {
+                players.push({
+                    x: 600 - Math.random() * 100,
+                    y: 100 + i * 80,
+                    color: '#2980b9',
+                    speed: 2 + Math.random() * 1,
+                    team: 'OPP'
+                });
+            }
+        }
 
-    <footer>
-        <p>&copy; 2026 Korea Football Tactics Report. Hosted on GitHub.</p>
-    </footer>
+        function resetGame() {
+            ball.x = 400; ball.y = 250;
+            ball.targetX = 400; ball.targetY = 250;
+            initPlayers();
+        }
 
+        // 경기장 그리기
+        function drawPitch() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 3;
+
+            // 하프라인
+            ctx.beginPath();
+            ctx.moveTo(400, 0);
+            ctx.lineTo(400, 500);
+            ctx.stroke();
+
+            // 센터 서클
+            ctx.beginPath();
+            ctx.arc(400, 250, 70, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 페널티 박스 (좌)
+            ctx.strokeRect(0, 100, 150, 300);
+            // 페널티 박스 (우)
+            ctx.strokeRect(650, 100, 150, 300);
+        }
+
+        function update() {
+            // 공 이동
+            let dx = ball.targetX - ball.x;
+            let dy = ball.targetY - ball.y;
+            let dist = Math.hypot(dx, dy);
+            if (dist > ball.speed) {
+                ball.x += (dx / dist) * ball.speed;
+                ball.y += (dy / dist) * ball.speed;
+            } else {
+                ball.x = ball.targetX;
+                ball.y = ball.targetY;
+            }
+
+            // 선수 이동 (공을 향해 추격)
+            players.forEach(p => {
+                let pdx = ball.x - p.x;
+                let pdy = ball.y - p.y;
+                let pDist = Math.hypot(pdx, pdy);
+                
+                // 공과 일정 거리 유지 (너무 겹치지 않게)
+                if (pDist > 15) {
+                    p.x += (pdx / pDist) * p.speed;
+                    p.y += (pdy / pDist) * p.speed;
+                }
+            });
+        }
+
+        function draw() {
+            drawPitch();
+
+            // 선수 그리기
+            players.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 12, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+                ctx.strokeStyle = '#222';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+
+            // 공 그리기
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        // 마우스 클릭 이벤트 (공 이동 위치 지정)
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            ball.targetX = e.clientX - rect.left;
+            ball.targetY = e.clientY - rect.top;
+        });
+
+        initPlayers();
+        loop();
+    </script>
 </body>
 </html>
